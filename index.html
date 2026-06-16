@@ -183,6 +183,7 @@
   <div class="bar">
     <div>
       <h2 id="secTitle">All wallpapers</h2>
+      <div class="ct" id="catCt"></div>
     </div>
     <div class="ctrl">
       <button class="gbtn" id="favBtn">♥ Saved</button>
@@ -405,6 +406,7 @@ function paint(canvas,item,w,h){
 let isPro=false, filter="all", showFav=false;
 let favs=new Set(), loaded=0, items=[], selected=null, selPlan="year", catShift=0;
 const PAGE=18;
+const CATALOG_SIZE=1000;
 
 /* favs store full item by seed */
 const favStore=new Map();
@@ -417,8 +419,8 @@ function buildCatalog(){
   }
   items=[];
   let pool = filter==="all" ? CATS : CATS.filter(c=>c.id===filter);
-  // generate a big virtual catalog deterministically
-  for(let i=0;i<240;i++){
+  // generate 1000 unique wallpapers deterministically (lazy-painted as you scroll)
+  for(let i=0;i<CATALOG_SIZE;i++){
     const cat=pool[(i+catShift)%pool.length];
     items.push(makeItem(cat.id, i*7+catShift));
   }
@@ -464,6 +466,7 @@ function loadMore(){
 function reset(){
   buildCatalog();loaded=0;grid.innerHTML="";
   document.getElementById("secTitle").textContent= showFav?"Saved wallpapers":(filter==="all"?"All wallpapers":CATS.find(c=>c.id===filter).name);
+  document.getElementById("catCt").textContent= showFav? (items.length+" saved") : (items.length.toLocaleString()+" wallpapers");
   document.getElementById("favBtn").dataset.on=showFav?"1":"0";
   if(showFav&&items.length===0){grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--mut2);font-family:var(--f-m);font-size:12px;padding:50px">No saved wallpapers yet. Tap ♥ on any piece.</div>'}
   else loadMore();
