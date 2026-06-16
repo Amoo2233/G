@@ -2,8 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Bubble — Wallpaper Foundry</title>
+<!-- PWA / Android installable app -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0b0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bubble">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
   :root{
@@ -33,6 +43,10 @@
   .upg{cursor:pointer;font-family:var(--f-d);font-weight:600;font-size:12px;letter-spacing:.04em;padding:8px 15px;border-radius:99px;border:none;color:#0a0b0f;background:linear-gradient(180deg,#e8d0a8,#d4b483);transition:transform .15s,box-shadow .2s}
   .upg:hover{transform:translateY(-1px);box-shadow:0 6px 22px -8px rgba(212,180,131,.6)}
   .upg:focus-visible,button:focus-visible,.chip:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+  .install{cursor:pointer;font-family:var(--f-m);font-size:11px;letter-spacing:.06em;padding:8px 13px;border-radius:99px;border:1px solid var(--acc);color:var(--acc);background:rgba(124,156,255,.08);transition:.15s}
+  .install:hover{background:rgba(124,156,255,.16)}
+  /* respect device notches when launched as an installed app */
+  header{padding-top:calc(14px + env(safe-area-inset-top));padding-left:calc(20px + env(safe-area-inset-left));padding-right:calc(20px + env(safe-area-inset-right))}
 
   /* hero */
   .hero{padding:46px 20px 26px;max-width:1340px;margin:0 auto;position:relative}
@@ -145,6 +159,7 @@
     </div>
   </div>
   <div class="hbtns">
+    <button class="install" id="installBtn" hidden>⤓ Install app</button>
     <div class="pill" id="statePill"><span class="sw" style="width:6px;height:6px;border-radius:99px;background:var(--mut)"></span> FREE</div>
     <button class="upg" id="upgBtn">Go Pro</button>
   </div>
@@ -509,7 +524,7 @@ document.getElementById("dlBtn").onclick=()=>{
     const ctx=cv.getContext("2d");ctx.font=`${Math.round(r.w*0.022)}px monospace`;ctx.fillStyle="rgba(255,255,255,0.5)";ctx.textAlign="right";
     ctx.fillText("Bubble · made with the free foundry",r.w-r.w*0.04,r.h-r.h*0.025);
   }
-  const a=document.createElement("a");a.download=`aether-${selected.name.replace(/\s/g,'-').toLowerCase()}-${r.w}x${r.h}.png`;
+  const a=document.createElement("a");a.download=`bubble-${selected.name.replace(/\s/g,'-').toLowerCase()}-${r.w}x${r.h}.png`;
   a.href=cv.toDataURL("image/png");a.click();
   toast(isPro?"Exported "+r.d+" ✓":"Downloaded ✓ — upgrade for 4K, no watermark");
 };
@@ -540,6 +555,32 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){document.getElement
 
 document.getElementById("catCount").textContent=CATS.length;
 reset();
+
+/* ---------- PWA: installable Android app ---------- */
+// Register the service worker for offline support.
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").catch(()=>{/* offline mode unavailable */});
+  });
+}
+// Custom "Install app" affordance (Chrome/Android, Edge, desktop Chrome).
+let deferredPrompt=null;
+const installBtn=document.getElementById("installBtn");
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();deferredPrompt=e;
+  if(!isStandalone())installBtn.hidden=false;
+});
+installBtn.onclick=async()=>{
+  if(!deferredPrompt) return;
+  installBtn.hidden=true;
+  deferredPrompt.prompt();
+  const{outcome}=await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  toast(outcome==="accepted"?"Installing Bubble ♚":"Install dismissed — tap Install anytime");
+};
+window.addEventListener("appinstalled",()=>{installBtn.hidden=true;toast("Bubble installed ✓");});
+if(isStandalone())installBtn.hidden=true;
 </script>
 </body>
 </html>
