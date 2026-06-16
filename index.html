@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ÆTHER — Wallpaper Foundry</title>
+<title>Bubble — Wallpaper Foundry</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
   :root{
@@ -140,7 +140,7 @@
   <div class="brand">
     <div class="logo"></div>
     <div>
-      <div class="bname">ÆTHER</div>
+      <div class="bname">Bubble</div>
       <div class="bsub">WALLPAPER FOUNDRY</div>
     </div>
   </div>
@@ -214,7 +214,7 @@
     <button class="x" id="pwClose">✕</button>
     <div class="top">
       <div class="crown">♚</div>
-      <h3>ÆTHER Pro</h3>
+      <h3>Bubble Pro</h3>
       <div class="sub">Unlock the full foundry.</div>
     </div>
     <div class="feats">
@@ -243,7 +243,7 @@
 
 <div class="toast" id="toast"></div>
 
-<footer>ÆTHER FOUNDRY · GENERATIVE WALLPAPER ENGINE · DEMO BUILD</footer>
+<footer>BUBBLE FOUNDRY · GENERATIVE WALLPAPER ENGINE · DEMO BUILD</footer>
 
 <script>
 /* ---------- seeded RNG ---------- */
@@ -507,7 +507,7 @@ document.getElementById("dlBtn").onclick=()=>{
   paint(cv,selected,r.w,r.h);
   if(!isPro){ // watermark on free
     const ctx=cv.getContext("2d");ctx.font=`${Math.round(r.w*0.022)}px monospace`;ctx.fillStyle="rgba(255,255,255,0.5)";ctx.textAlign="right";
-    ctx.fillText("ÆTHER · made with the free foundry",r.w-r.w*0.04,r.h-r.h*0.025);
+    ctx.fillText("Bubble · made with the free foundry",r.w-r.w*0.04,r.h-r.h*0.025);
   }
   const a=document.createElement("a");a.download=`aether-${selected.name.replace(/\s/g,'-').toLowerCase()}-${r.w}x${r.h}.png`;
   a.href=cv.toDataURL("image/png");a.click();
