@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClipForge — TikTok Content Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF1F6;
+    --card:#FFFFFF;
+    --ink:#171B26;
+    --muted:#6B7285;
+    --line:#DDE2EC;
+    --violet:#5B3DF5;
+    --violet-soft:#EFEBFF;
+    --coral:#FF5C7A;
+    --mint:#18C29C;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Sora',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    padding:20px 16px 80px;
+  }
+  .wrap{max-width:960px;margin:0 auto}
+
+  /* ---------- header ---------- */
+  header{margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .logo{
+    font-family:'Unbounded',sans-serif;
+    font-weight:700;
+    font-size:22px;
+    letter-spacing:-.5px;
+  }
+  .logo span{color:var(--violet)}
+  .tagline{color:var(--muted);font-size:13px;margin-top:4px}
+  .key-btn{
+    font-family:'Sora',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    color:var(--muted);
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 12px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .key-btn:hover{border-color:var(--violet);color:var(--violet)}
+
+  /* ---------- cards ---------- */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .label{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--muted);
+    margin-bottom:8px;
+    display:block;
+  }
+
+  /* ---------- inputs ---------- */
+  textarea,input[type=text],input[type=password]{
+    width:100%;
+    font-family:'Sora',sans-serif;
+    font-size:15px;
+    color:var(--ink);
+    background:var(--bg);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+    outline:none;
+    resize:none;
+  }
+  textarea:focus,input:focus{border-color:var(--violet);box-shadow:0 0 0 3px var(--violet-soft)}
+  textarea{min-height:72px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    font-family:'Sora',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:8px 14px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:var(--card);
+    color:var(--ink);
+    cursor:pointer;
+    transition:all .15s;
+  }
+  .chip:hover{border-color:var(--violet)}
+  .chip.on{background:var(--violet);border-color:var(--violet);color:#fff}
+  .chip:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .field{flex:1;min-width:140px}
+
+  /* ---------- buttons ---------- */
+  .btn{
+    font-family:'Sora',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    border:none;
+    border-radius:14px;
+    padding:14px 22px;
+    cursor:pointer;
+    transition:transform .1s, box-shadow .15s;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .btn-primary{
+    background:var(--violet);
+    color:#fff;
+    width:100%;
+    box-shadow:0 4px 14px rgba(91,61,245,.3);
+  }
+  .btn-primary:disabled{opacity:.55;cursor:wait;box-shadow:none}
+  .btn-ghost{
+    background:transparent;
+    color:var(--violet);
+    border:1.5px dashed var(--violet);
+    width:100%;
+    font-size:14px;
+    padding:11px;
+  }
+  .btn-ghost:disabled{opacity:.55;cursor:wait}
+  .copy-btn{
+    font-size:11px;
+    font-weight:700;
+    color:var(--violet);
+    background:var(--violet-soft);
+    border:none;
+    border-radius:8px;
+    padding:5px 10px;
+    cursor:pointer;
+  }
+  .copy-btn.done{background:#DFF7F0;color:var(--mint)}
+
+  /* ---------- API key modal ---------- */
+  .modal-back{
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(23,27,38,.55);
+    z-index:50;
+    align-items:center;justify-content:center;
+    padding:16px;
+  }
+  .modal-back.open{display:flex}
+  .modal{
+    background:var(--card);
+    border-radius:var(--radius);
+    padding:22px;
+    max-width:440px;
+    width:100%;
+  }
+  .modal h2{font-family:'Unbounded',sans-serif;font-size:16px;margin-bottom:8px}
+  .modal p{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:14px}
+  .modal p a{color:var(--violet)}
+  .modal .row{margin-top:12px}
+  .key-note{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
+
+  /* ---------- results ---------- */
+  #results{display:none}
+  .hook-item{
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-bottom:8px;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:600;
+    line-height:1.4;
+    transition:all .15s;
+  }
+  .hook-item:hover{border-color:var(--violet)}
+  .hook-item.on{border-color:var(--violet);background:var(--violet-soft)}
+  .hook-item .tag{
+    display:inline-block;
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--coral);
+    margin-bottom:4px;
+  }
+
+  /* phone preview — the signature */
+  .stage{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .phone{
+    flex:0 0 240px;
+    margin:0 auto;
+  }
+  .phone-frame{
+    width:240px;
+    aspect-ratio:9/16;
+    background:linear-gradient(160deg,#1B1E2E 0%,#12131D 60%,#0D0E16 100%);
+    border-radius:28px;
+    border:6px solid var(--ink);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 18px;
+  }
+  .phone-frame::before{
+    content:"";
+    position:absolute;
+    top:10px;left:50%;
+    transform:translateX(-50%);
+    width:70px;height:16px;
+    background:var(--ink);
+    border-radius:10px;
+  }
+  .onscreen{
+    font-family:'Unbounded',sans-serif;
+    font-weight:700;
+    font-size:17px;
+    line-height:1.35;
+    color:#fff;
+    text-align:center;
+    text-shadow:0 2px 12px rgba(0,0,0,.6);
+  }
+  .phone-hint{
+    text-align:center;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:8px;
+  }
+  .script-col{flex:1;min-width:260px}
+
+  /* script beats */
+  .beat{
+    display:flex;
+    gap:12px;
+    padding:12px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .beat:last-child{border-bottom:none}
+  .beat-time{
+    font-family:'Unbounded',sans-serif;
+    font-size:11px;
+    font-weight:700;
+    color:var(--violet);
+    flex:0 0 52px;
+    padding-top:2px;
+  }
+  .beat-body{flex:1;font-size:14px;line-height:1.5}
+  .beat-body .vo{margin-bottom:4px}
+  .beat-body .meta{
+    font-size:12px;
+    color:var(--muted);
+  }
+  .beat-body .meta b{color:var(--coral);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+
+  .cap-text{font-size:14px;line-height:1.55;white-space:pre-wrap}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .tags span{
+    font-size:12px;
+    font-weight:600;
+    color:var(--violet);
+    background:var(--violet-soft);
+    border-radius:8px;
+    padding:4px 9px;
+  }
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .card-head .label{margin-bottom:0}
+
+  /* ideas */
+  .idea{
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    margin-bottom:8px;
+    font-size:14px;
+    line-height:1.45;
+    cursor:pointer;
+    transition:border-color .15s;
+  }
+  .idea:hover{border-color:var(--violet)}
+  .idea b{display:block;font-weight:700;margin-bottom:2px}
+  .idea small{color:var(--muted)}
+
+  /* loading + error */
+  .loading{
+    display:none;
+    text-align:center;
+    padding:28px 0;
+    color:var(--muted);
+    font-size:14px;
+  }
+  .dots::after{content:"";animation:dots 1.2s steps(4,end) infinite}
+  @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+  .error{
+    display:none;
+    background:#FFF0F3;
+    border:1px solid #FFD1DB;
+    color:#C22D4E;
+    border-radius:12px;
+    padding:12px 14px;
+    font-size:13px;
+    margin-bottom:16px;
+  }
+  @media(prefers-reduced-motion:reduce){
+    .dots::after{animation:none;content:"..."}
+    .btn:active{transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="logo">Clip<span>Forge</span></div>
+      <div class="tagline">Scripts, hooks &amp; captions for your AI-tools niche — built for TikTok</div>
+    </div>
+    <button class="key-btn" id="keyBtn" title="Set your Anthropic API key">&#128273; API key</button>
+  </header>
+
+  <!-- INPUT -->
+  <div class="card" id="inputCard">
+    <label class="label" for="topic">What's the video about?</label>
+    <textarea id="topic" placeholder="e.g. How a bakery owner can use ChatGPT to write a week of Instagram posts in 10 minutes"></textarea>
+
+    <div class="row">
+      <div class="field">
+        <span class="label">Format</span>
+        <div class="chips" id="formatChips" role="group" aria-label="Video format"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <span class="label">Length</span>
+        <div class="chips" id="lenChips" role="group" aria-label="Video length"></div>
+      </div>
+      <div class="field">
+        <span class="label">Tone</span>
+        <div class="chips" id="toneChips" role="group" aria-label="Tone"></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <button class="btn btn-primary" id="genBtn">Generate script</button>
+    </div>
+    <div class="row">
+      <button class="btn btn-ghost" id="ideaBtn">No topic yet? Get 5 video ideas</button>
+    </div>
+  </div>
+
+  <div class="error" id="errBox"></div>
+  <div class="loading" id="loadBox"><span class="dots" id="loadMsg">Writing your script</span></div>
+
+  <!-- IDEAS -->
+  <div class="card" id="ideasCard" style="display:none">
+    <div class="card-head">
+      <span class="label">Video ideas — tap one to use it</span>
+    </div>
+    <div id="ideasList"></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results">
+    <div class="card">
+      <div class="card-head">
+        <span class="label">Hooks — tap to preview, best one first</span>
+        <button class="copy-btn" data-copy="hooks">Copy</button>
+      </div>
+      <div id="hooksList"></div>
+    </div>
+
+    <div class="card">
+      <span class="label">Preview &amp; script</span>
+      <div class="stage">
+        <div class="phone">
+          <div class="phone-frame"><div class="onscreen" id="phoneText">Your hook shows here</div></div>
+          <div class="phone-hint">On-screen text preview (first 1–2 sec)</div>
+        </div>
+        <div class="script-col">
+          <div class="card-head">
+            <span class="label">Shot-by-shot</span>
+            <button class="copy-btn" data-copy="script">Copy</button>
+          </div>
+          <div id="beatsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="label">Caption</span>
+        <button class="copy-btn" data-copy="caption">Copy</button>
+      </div>
+      <div class="cap-text" id="capText"></div>
+      <div class="tags" id="tagList"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="label">Why this should work</span>
+      </div>
+      <div class="cap-text" id="whyText"></div>
+    </div>
+  </div>
+</div>
+
+<!-- API KEY MODAL -->
+<div class="modal-back" id="keyModal">
+  <div class="modal">
+    <h2>Connect your Anthropic API key</h2>
+    <p>ClipForge calls the Claude API directly from your browser, so it needs your own API key.
+       Get one at <a href="https://platform.claude.com/" target="_blank" rel="noopener">platform.claude.com</a>.</p>
+    <input type="password" id="keyInput" placeholder="sk-ant-..." autocomplete="off">
+    <div class="row">
+      <button class="btn btn-primary" id="keySave">Save key</button>
+    </div>
+    <div class="key-note">Your key is stored only in this browser (localStorage) and sent only to api.anthropic.com.
+      Anyone with access to this browser profile can read it — don't use a shared computer, and use a key you can revoke.</div>
+  </div>
+</div>
+
+<script>
+const FORMATS = ["Tutorial","Listicle","Tool demo","Hot take","Before / After","Story"];
+const LENGTHS = ["15s","30s","60s"];
+const TONES = ["Casual","Hype","Straight-talk"];
+
+const state = {format:"Tutorial", len:"30s", tone:"Casual", data:null};
+
+function buildChips(el, items, key){
+  const box = document.getElementById(el);
+  items.forEach(v=>{
+    const b=document.createElement("button");
+    b.className="chip"+(state[key]===v?" on":"");
+    b.textContent=v;
+    b.onclick=()=>{
+      state[key]=v;
+      box.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.textContent===v));
+    };
+    box.appendChild(b);
+  });
+}
+buildChips("formatChips",FORMATS,"format");
+buildChips("lenChips",LENGTHS,"len");
+buildChips("toneChips",TONES,"tone");
+
+const $ = id=>document.getElementById(id);
+function showLoad(msg){$("loadMsg").textContent=msg;$("loadBox").style.display="block";$("errBox").style.display="none"}
+function hideLoad(){$("loadBox").style.display="none"}
+function showErr(msg){$("errBox").textContent=msg;$("errBox").style.display="block";hideLoad()}
+
+/* ---------- API key handling ---------- */
+const KEY_STORAGE = "clipforge_api_key";
+function getKey(){ return localStorage.getItem(KEY_STORAGE) || ""; }
+function openKeyModal(){
+  $("keyInput").value = getKey();
+  $("keyModal").classList.add("open");
+  $("keyInput").focus();
+}
+function closeKeyModal(){ $("keyModal").classList.remove("open"); }
+$("keyBtn").onclick = openKeyModal;
+$("keySave").onclick = ()=>{
+  const k = $("keyInput").value.trim();
+  if(!k){ $("keyInput").focus(); return; }
+  localStorage.setItem(KEY_STORAGE, k);
+  closeKeyModal();
+  $("errBox").style.display="none";
+};
+$("keyInput").addEventListener("keydown", e=>{ if(e.key==="Enter") $("keySave").click(); });
+$("keyModal").addEventListener("click", e=>{ if(e.target===$("keyModal") && getKey()) closeKeyModal(); });
+
+/* ---------- Claude API ---------- */
+async function askClaude(prompt){
+  const apiKey = getKey();
+  if(!apiKey){
+    openKeyModal();
+    throw new Error("NO_KEY");
+  }
+  let res;
+  try{
+    res = await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "x-api-key":apiKey,
+        "anthropic-version":"2023-06-01",
+        // Required for CORS when calling the API directly from a browser
+        "anthropic-dangerous-direct-browser-access":"true"
+      },
+      body:JSON.stringify({
+        model:"claude-sonnet-4-6",
+        max_tokens:2000,
+        messages:[{role:"user",content:prompt}]
+      })
+    });
+  }catch(e){
+    throw new Error("Network error — check your internet connection and try again.");
+  }
+
+  const data = await res.json().catch(()=>null);
+
+  if(!res.ok){
+    if(res.status===401){
+      openKeyModal();
+      throw new Error("Your API key was rejected (401). Double-check it and save again.");
+    }
+    if(res.status===429) throw new Error("Rate limited (429) — wait a moment and try again.");
+    if(res.status===529 || res.status>=500) throw new Error("Claude is overloaded right now — try again in a few seconds.");
+    const apiMsg = data && data.error && data.error.message ? data.error.message : ("HTTP "+res.status);
+    throw new Error("API error: "+apiMsg);
+  }
+
+  if(!data || !Array.isArray(data.content)) throw new Error("Empty response from the API — try again.");
+
+  const text = data.content.filter(c=>c.type==="text").map(c=>c.text).join("\n");
+  return extractJSON(text);
+}
+
+// Pull the first JSON value ({...} or [...]) out of the model's reply,
+// tolerating markdown fences or stray prose around it.
+function extractJSON(text){
+  const clean = text.replace(/```json|```/g,"").trim();
+  const objStart = clean.indexOf("{");
+  const arrStart = clean.indexOf("[");
+  let start;
+  if(objStart===-1) start = arrStart;
+  else if(arrStart===-1) start = objStart;
+  else start = Math.min(objStart, arrStart);
+  if(start===-1) throw new Error("The model didn't return JSON — hit generate again.");
+  const end = clean[start]==="[" ? clean.lastIndexOf("]") : clean.lastIndexOf("}");
+  if(end<=start) throw new Error("The model returned incomplete JSON — hit generate again.");
+  return JSON.parse(clean.slice(start, end+1));
+}
+
+/* ---------- generate script ---------- */
+$("genBtn").onclick = async ()=>{
+  const topic = $("topic").value.trim();
+  if(!topic){ showErr("Type a topic first — or hit the ideas button below."); return; }
+  $("genBtn").disabled=true;
+  $("ideaBtn").disabled=true;
+  $("ideasCard").style.display="none";
+  $("results").style.display="none";
+  showLoad("Writing your script");
+  try{
+    const prompt = `You are a TikTok scriptwriter for a creator whose niche is "AI tools for non-technical creators and small business owners". The audience is NOT technical — no jargon, everything explained in plain words with concrete business outcomes (time saved, money made, posts published).
+
+Write a TikTok video plan for this topic: "${topic}"
+Format: ${state.format}
+Target length: ${state.len}
+Tone: ${state.tone}
+
+Rules:
+- Hooks must create curiosity or promise a concrete outcome in the first 1.5 seconds. No "Hey guys". Vary the angle across the 3 hooks (curiosity gap / bold claim / relatable pain).
+- Script beats must fit the target length. Voiceover lines short and spoken-style. Every beat needs on-screen text and a b-roll/visual note the creator can actually film on a phone or screen-record.
+- End with a CTA that fits the niche (follow for AI tools, comment a keyword, save this).
+- Caption: 1-2 lines, curiosity-driven, then a line break, then a soft CTA. Hashtags: 4-6, mix of niche (#aitools #smallbusinesstips) and broad reach, no spam.
+- "why": 2-3 sentences of honest reasoning on why this angle should retain viewers, plus one weakness or risk of the video to watch out for. Be direct, not promotional.
+
+Respond ONLY with valid JSON, no markdown, no preamble:
+{
+ "hooks":[{"angle":"curiosity|claim|pain","text":"..."},{...},{...}],
+ "beats":[{"time":"0-2s","vo":"voiceover line","onscreen":"on-screen text","visual":"what to show"},...],
+ "caption":"...",
+ "hashtags":["#...","#..."],
+ "why":"..."
+}`;
+    const data = await askClaude(prompt);
+    if(!Array.isArray(data.hooks) || !data.hooks.length || !Array.isArray(data.beats))
+      throw new Error("The response was missing parts of the script — hit generate again.");
+    state.data = data;
+    renderResults(data);
+  }catch(e){
+    console.error(e);
+    if(e.message!=="NO_KEY") showErr(e.message || "Generation failed — hit generate again.");
+    else hideLoad();
+  }
+  $("genBtn").disabled=false;
+  $("ideaBtn").disabled=false;
+};
+
+function renderResults(d){
+  hideLoad();
+  // hooks
+  const hl = $("hooksList"); hl.innerHTML="";
+  d.hooks.forEach((h,i)=>{
+    const div=document.createElement("div");
+    div.className="hook-item"+(i===0?" on":"");
+    div.innerHTML=`<span class="tag">${escapeHtml(h.angle)}</span><br>${escapeHtml(h.text)}`;
+    div.onclick=()=>{
+      hl.querySelectorAll(".hook-item").forEach(x=>x.classList.remove("on"));
+      div.classList.add("on");
+      $("phoneText").textContent=h.text;
+    };
+    hl.appendChild(div);
+  });
+  $("phoneText").textContent=d.hooks[0].text;
+  // beats
+  const bl = $("beatsList"); bl.innerHTML="";
+  d.beats.forEach(b=>{
+    const div=document.createElement("div");
+    div.className="beat";
+    div.innerHTML=`<div class="beat-time">${escapeHtml(b.time)}</div>
+      <div class="beat-body">
+        <div class="vo">${escapeHtml(b.vo)}</div>
+        <div class="meta"><b>Text:</b> ${escapeHtml(b.onscreen)} &nbsp; <b>Show:</b> ${escapeHtml(b.visual)}</div>
+      </div>`;
+    bl.appendChild(div);
+  });
+  // caption + tags
+  $("capText").textContent=d.caption || "";
+  const tl=$("tagList"); tl.innerHTML="";
+  (d.hashtags||[]).forEach(t=>{
+    const s=document.createElement("span"); s.textContent=t; tl.appendChild(s);
+  });
+  $("whyText").textContent=d.why || "";
+  $("results").style.display="block";
+  $("results").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ---------- ideas ---------- */
+$("ideaBtn").onclick = async ()=>{
+  $("ideaBtn").disabled=true;
+  $("genBtn").disabled=true;
+  showLoad("Finding angles people actually search for");
+  try{
+    const prompt = `Generate 5 TikTok video ideas for a creator in the niche "AI tools for non-technical creators and small business owners". Audience: bakery owners, coaches, Etsy sellers, freelancers, local service businesses — people with zero technical skills.
+
+Each idea must target a specific pain (time, money, content, customers) and a specific, real AI tool or use case. No vague "AI is amazing" ideas. Prefer angles with built-in curiosity or a concrete number in the title.
+
+Respond ONLY with valid JSON, no markdown:
+[{"title":"video title / hook idea","angle":"one line: why this works and who it's for"},...]`;
+    const ideas = await askClaude(prompt);
+    if(!Array.isArray(ideas) || !ideas.length) throw new Error("No ideas came back — try again.");
+    hideLoad();
+    const list=$("ideasList"); list.innerHTML="";
+    ideas.forEach(i=>{
+      const div=document.createElement("div");
+      div.className="idea";
+      div.innerHTML=`<b>${escapeHtml(i.title)}</b><small>${escapeHtml(i.angle)}</small>`;
+      div.onclick=()=>{
+        $("topic").value=i.title;
+        $("ideasCard").style.display="none";
+        $("topic").scrollIntoView({behavior:"smooth"});
+        $("topic").focus();
+      };
+      list.appendChild(div);
+    });
+    $("ideasCard").style.display="block";
+  }catch(e){
+    console.error(e);
+    if(e.message!=="NO_KEY") showErr(e.message || "Couldn't fetch ideas — try again.");
+    else hideLoad();
+  }
+  $("ideaBtn").disabled=false;
+  $("genBtn").disabled=false;
+};
+
+/* ---------- copy ---------- */
+function copyText(text){
+  if(navigator.clipboard && window.isSecureContext){
+    return navigator.clipboard.writeText(text);
+  }
+  // Fallback for non-secure contexts (e.g. opened via file:// or plain http)
+  return new Promise((resolve,reject)=>{
+    const ta=document.createElement("textarea");
+    ta.value=text;
+    ta.style.position="fixed";
+    ta.style.opacity="0";
+    document.body.appendChild(ta);
+    ta.select();
+    try{
+      document.execCommand("copy") ? resolve() : reject(new Error("copy failed"));
+    }catch(err){ reject(err); }
+    finally{ document.body.removeChild(ta); }
+  });
+}
+
+document.querySelectorAll(".copy-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    if(!state.data) return;
+    const d=state.data;
+    let text="";
+    if(btn.dataset.copy==="hooks") text=d.hooks.map(h=>h.text).join("\n");
+    if(btn.dataset.copy==="script") text=d.beats.map(b=>`[${b.time}] VO: ${b.vo}\n   Text: ${b.onscreen}\n   Show: ${b.visual}`).join("\n");
+    if(btn.dataset.copy==="caption") text=d.caption+"\n\n"+(d.hashtags||[]).join(" ");
+    copyText(text).then(()=>{
+      btn.textContent="Copied ✓"; btn.classList.add("done");
+      setTimeout(()=>{btn.textContent="Copy";btn.classList.remove("done")},1500);
+    }).catch(()=>{
+      showErr("Couldn't copy to clipboard — select and copy manually.");
+    });
+  };
+});
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+// First visit: ask for the key up front so the first generate doesn't fail
+if(!getKey()) openKeyModal();
+</script>
+</body>
+</html>
