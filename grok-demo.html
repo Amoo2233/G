@@ -3,151 +3,401 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Grok Demo Site • Built Live</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        if (typeof tailwind !== 'undefined') tailwind.config = { darkMode: 'class' };
+        if (typeof tailwind !== "undefined") {
+            tailwind.config = {
+                darkMode: "class"
+            };
+        }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;600&display=swap');
-        body { font-family: 'Inter', system-ui, sans-serif; }
-        .title-font { font-family: 'Space Grotesk', sans-serif; }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Inter", system-ui, sans-serif;
+        }
+
+        #features,
+        #showcase,
+        #about {
+            scroll-margin-top: 5.5rem;
+        }
+
+        .title-font {
+            font-family: "Space Grotesk", sans-serif;
+        }
+
         .hero-bg {
-            background-color: #0f172a;
-            background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.55) 100%), url('https://picsum.photos/id/1015/2000/1200');
+            background-image:
+                linear-gradient(
+                    135deg,
+                    rgba(15, 23, 42, 0.45),
+                    rgba(30, 41, 59, 0.35)
+                ),
+                url("https://picsum.photos/id/1015/2000/1200");
             background-size: cover;
             background-position: center;
         }
-        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
-        .nav-link { position: relative; }
-        .nav-link:after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #22d3ee; transition: width 0.3s ease; }
-        .nav-link:hover:after { width: 100%; }
+
+        .card-hover {
+            transition:
+                transform 0.3s ease,
+                box-shadow 0.3s ease,
+                border-color 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                0 20px 25px -5px rgb(0 0 0 / 0.15),
+                0 8px 10px -6px rgb(0 0 0 / 0.15);
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #22d3ee;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .selectable-card.selected {
+            outline: 4px solid #22d3ee;
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            .card-hover {
+                transition: none;
+            }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-zinc-950 dark:text-slate-200 transition-colors">
-    <nav class="fixed top-0 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 z-50 transition-colors">
+
+<body class="bg-slate-50 text-slate-900 dark:bg-zinc-950 dark:text-slate-200 transition-colors duration-300">
+
+    <nav class="fixed top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/80">
         <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-cyan-500 rounded-xl flex items-center justify-center text-black font-bold text-xl">G</div>
-                <span class="title-font text-2xl font-semibold tracking-tighter">GrokSite</span>
-            </div>
+
+            <a href="#" class="flex items-center gap-3" aria-label="GrokSite home">
+                <div class="w-8 h-8 bg-cyan-500 rounded-xl flex items-center justify-center text-black font-bold text-xl">
+                    G
+                </div>
+
+                <span class="title-font text-2xl font-semibold tracking-tighter">
+                    GrokSite
+                </span>
+            </a>
+
             <div class="hidden md:flex items-center gap-8 text-sm font-medium">
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#showcase" class="nav-link">Showcase</a>
                 <a href="#about" class="nav-link">About</a>
             </div>
-            <button onclick="toggleDark()" aria-label="Toggle theme" class="px-5 py-2.5 bg-slate-900/10 hover:bg-slate-900/20 dark:bg-white/10 dark:hover:bg-white/20 rounded-2xl flex items-center gap-2 text-sm font-medium transition"><i id="theme-icon" class="fas fa-moon"></i></button>
+
+            <button
+                id="theme-toggle"
+                type="button"
+                onclick="toggleDark()"
+                aria-label="Switch to light theme"
+                aria-pressed="true"
+                class="px-5 py-2.5 bg-black/5 hover:bg-black/10 dark:bg-white/10 dark:hover:bg-white/20 rounded-2xl flex items-center gap-2 text-sm font-medium transition"
+            >
+                <i class="fas fa-sun"></i>
+            </button>
+
         </div>
     </nav>
 
-    <section class="hero-bg min-h-screen flex items-center justify-center text-center relative overflow-hidden">
-        <div class="absolute inset-0 bg-black/50"></div>
-        <div class="relative z-10 px-6 max-w-4xl mx-auto pt-20 text-white">
-            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-6 py-2 rounded-3xl text-sm mb-6">
-                <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span></span>
-                Built live with Grok • July 2026
-            </div>
-            <h1 class="title-font text-7xl md:text-8xl font-bold tracking-tighter mb-6 leading-none">Hey homie,<br>watch this.</h1>
-            <p class="text-2xl text-slate-300 max-w-xl mx-auto mb-10">I just created this full interactive website in seconds.</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onclick="document.getElementById('showcase').scrollIntoView({ behavior: 'smooth' })" class="px-10 py-5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-3xl text-lg flex items-center justify-center gap-3 transition-all active:scale-95"><i class="fas fa-rocket"></i> Explore Demo</button>
-                <button onclick="alert('Yo! Tell me what site you want and I\'ll build the full thing — React, Tailwind, animations, forms, whatever. 🚀')" class="px-10 py-5 border border-white/30 hover:bg-white/10 font-semibold rounded-3xl text-lg transition-all">Build Yours Now</button>
-            </div>
-        </div>
-    </section>
+    <main>
 
-    <section id="features" class="py-24 bg-slate-100 dark:bg-zinc-900 transition-colors">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <span class="px-4 py-2 bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-400 text-sm rounded-3xl">What I can do</span>
-                <h2 class="title-font text-5xl font-bold mt-4">Modern Web Magic</h2>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover transition-all border border-slate-200 dark:border-white/5">
-                    <div class="w-12 h-12 bg-cyan-500/10 text-cyan-500 rounded-2xl flex items-center justify-center text-xl mb-6"><i class="fas fa-bolt"></i></div>
-                    <h3 class="title-font text-2xl font-semibold mb-3">Instant Builds</h3>
-                    <p class="text-slate-600 dark:text-slate-400">Full pages in seconds — layout, copy, and styling generated together so everything ships coherent and ready.</p>
-                </div>
-                <div class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover transition-all border border-slate-200 dark:border-white/5">
-                    <div class="w-12 h-12 bg-cyan-500/10 text-cyan-500 rounded-2xl flex items-center justify-center text-xl mb-6"><i class="fas fa-palette"></i></div>
-                    <h3 class="title-font text-2xl font-semibold mb-3">Polished Design</h3>
-                    <p class="text-slate-600 dark:text-slate-400">Tailwind-powered design systems with real dark mode, hover states, and responsive layouts baked in.</p>
-                </div>
-                <div class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover transition-all border border-slate-200 dark:border-white/5">
-                    <div class="w-12 h-12 bg-cyan-500/10 text-cyan-500 rounded-2xl flex items-center justify-center text-xl mb-6"><i class="fas fa-gamepad"></i></div>
-                    <h3 class="title-font text-2xl font-semibold mb-3">Interactive Everything</h3>
-                    <p class="text-slate-600 dark:text-slate-400">Clickable cards, mini games, keyboard shortcuts — real JavaScript behavior, not just static mockups.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        <section class="hero-bg min-h-screen flex items-center justify-center text-center relative overflow-hidden text-white">
+            <div class="absolute inset-0 bg-black/45"></div>
 
-    <section id="showcase" class="py-24">
-        <div class="max-w-6xl mx-auto px-6">
-            <h2 class="title-font text-5xl font-bold text-center mb-4">Live Features</h2>
-            <p class="text-center text-slate-500 mb-12">Everything below actually works. Go ahead, poke at it.</p>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div onclick="this.classList.toggle('ring-4'); this.classList.toggle('ring-cyan-400')" class="bg-white dark:bg-zinc-900 p-8 rounded-3xl cursor-pointer card-hover transition-all border border-slate-200 dark:border-white/10">
-                    <div class="flex items-center gap-3 mb-4">
-                        <i class="fab fa-bitcoin text-3xl text-amber-500"></i>
-                        <h3 class="title-font text-2xl font-semibold">Selectable Card</h3>
-                    </div>
-                    <p class="text-slate-600 dark:text-slate-400">Click anywhere on this card to toggle a selection ring — the kind of micro-interaction that makes a UI feel alive.</p>
+            <div class="relative z-10 px-6 max-w-4xl mx-auto pt-24">
+
+                <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-6 py-2 rounded-3xl text-sm mb-6 border border-white/10">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+
+                    Built live with Grok • July 2026
                 </div>
-                <div class="bg-white dark:bg-zinc-900 p-8 rounded-3xl card-hover transition-all border border-slate-200 dark:border-white/10">
-                    <div id="game" class="h-48 bg-black rounded-2xl flex items-center justify-center text-6xl cursor-pointer select-none" onclick="playGame(this)">🎮 CLICK ME</div>
-                    <p class="text-center text-xs text-slate-500 mt-4">Score: <span id="score">0</span></p>
+
+                <h1 class="title-font text-5xl sm:text-7xl md:text-8xl font-bold tracking-tighter mb-6 leading-none">
+                    Hey homie,<br>watch this.
+                </h1>
+
+                <p class="text-xl sm:text-2xl text-slate-200 max-w-xl mx-auto mb-10">
+                    I just created this full interactive website in seconds.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+
+                    <button
+                        type="button"
+                        onclick="scrollToShowcase()"
+                        class="px-10 py-5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-3xl text-lg flex items-center justify-center gap-3 transition-all active:scale-95"
+                    >
+                        <i class="fas fa-rocket"></i>
+                        Explore Demo
+                    </button>
+
+                    <button
+                        type="button"
+                        onclick="showBuildMessage()"
+                        class="px-10 py-5 border border-white/30 hover:bg-white/10 font-semibold rounded-3xl text-lg transition-all active:scale-95"
+                    >
+                        Build Yours Now
+                    </button>
+
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="about" class="py-24 bg-slate-100 dark:bg-zinc-900 transition-colors">
-        <div class="max-w-3xl mx-auto px-6 text-center">
-            <h2 class="title-font text-5xl font-bold mb-6">About This Demo</h2>
-            <p class="text-lg text-slate-600 dark:text-slate-400">This entire page — the layout, the theme toggle, the mini game, the animations — was generated live in a single pass. It's a small taste of what AI-assisted building looks like: describe what you want, get a working site back. Press <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-800 rounded text-sm font-mono">G</kbd> anywhere for a surprise.</p>
-        </div>
-    </section>
+        <section id="features" class="py-24 bg-slate-100 dark:bg-zinc-900">
+            <div class="max-w-6xl mx-auto px-6">
 
-    <footer class="bg-white dark:bg-black py-16 border-t border-slate-200 dark:border-zinc-900 text-center transition-colors">
-        <p class="text-2xl title-font mb-2">Let's build something epic together, homie.</p>
-        <p class="text-sm text-slate-500">Built live with Grok • 2026</p>
+                <div class="text-center mb-16">
+                    <span class="px-4 py-2 bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-400 text-sm rounded-3xl">
+                        What I can do
+                    </span>
+
+                    <h2 class="title-font text-4xl sm:text-5xl font-bold mt-4">
+                        Modern Web Magic
+                    </h2>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+
+                    <article class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover border border-black/5 dark:border-white/5">
+                        <i class="fas fa-mobile-screen-button text-3xl text-cyan-500 mb-6"></i>
+                        <h3 class="title-font text-2xl font-semibold mb-3">
+                            Fully Responsive
+                        </h3>
+                        <p class="text-slate-600 dark:text-slate-400">
+                            Designed to work smoothly on phones, tablets and desktop screens.
+                        </p>
+                    </article>
+
+                    <article class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover border border-black/5 dark:border-white/5">
+                        <i class="fas fa-bolt text-3xl text-cyan-500 mb-6"></i>
+                        <h3 class="title-font text-2xl font-semibold mb-3">
+                            Fast Interactions
+                        </h3>
+                        <p class="text-slate-600 dark:text-slate-400">
+                            Lightweight animations and responsive interactive elements.
+                        </p>
+                    </article>
+
+                    <article class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover border border-black/5 dark:border-white/5">
+                        <i class="fas fa-wand-magic-sparkles text-3xl text-cyan-500 mb-6"></i>
+                        <h3 class="title-font text-2xl font-semibold mb-3">
+                            Clean Design
+                        </h3>
+                        <p class="text-slate-600 dark:text-slate-400">
+                            A modern visual style with reusable sections and components.
+                        </p>
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+        <section id="showcase" class="py-24">
+            <div class="max-w-6xl mx-auto px-6">
+
+                <h2 class="title-font text-4xl sm:text-5xl font-bold text-center mb-4">
+                    Live Features
+                </h2>
+
+                <p class="text-center text-slate-600 dark:text-slate-400 mb-12">
+                    Try the interactive cards below.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-8">
+
+                    <button
+                        type="button"
+                        onclick="toggleCryptoCard(this)"
+                        aria-pressed="false"
+                        class="selectable-card w-full bg-white dark:bg-zinc-900 p-8 rounded-3xl cursor-pointer card-hover border border-black/10 dark:border-white/10 text-left"
+                    >
+                        <i class="fab fa-bitcoin text-4xl text-amber-400 mb-6"></i>
+
+                        <span class="block title-font text-2xl font-semibold mb-3">
+                            Crypto Card
+                        </span>
+
+                        <span class="block text-slate-600 dark:text-slate-400">
+                            Click this card to select or deselect it.
+                        </span>
+                    </button>
+
+                    <article class="bg-white dark:bg-zinc-900 p-8 rounded-3xl card-hover border border-black/10 dark:border-white/10">
+
+                        <button
+                            id="game"
+                            type="button"
+                            onclick="playGame(this)"
+                            aria-label="Play click game"
+                            class="w-full h-48 bg-slate-950 dark:bg-black text-white rounded-2xl flex items-center justify-center text-4xl sm:text-6xl cursor-pointer transition-transform active:scale-95"
+                        >
+                            🎮 CLICK ME
+                        </button>
+
+                        <p class="text-center text-sm text-slate-500 mt-4">
+                            Score:
+                            <span id="score" aria-live="polite">0</span>
+                        </p>
+
+                    </article>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="about" class="bg-slate-100 dark:bg-black py-16 border-t border-slate-200 dark:border-zinc-900 text-center px-6">
+        <p class="text-2xl title-font mb-2">
+            Let's build something epic together, homie.
+        </p>
+
+        <p class="text-sm text-slate-500">
+            Interactive demo website • July 2026
+        </p>
     </footer>
 
     <script>
         const root = document.documentElement;
-        const themeIcon = document.getElementById('theme-icon');
+        const themeButton = document.getElementById("theme-toggle");
 
-        function applyTheme(dark) {
-            root.classList.toggle('dark', dark);
-            themeIcon.className = dark ? 'fas fa-moon' : 'fas fa-sun';
-            try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+        function prefersReducedMotion() {
+            return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        }
+
+        function scrollToShowcase() {
+            document.getElementById("showcase").scrollIntoView({
+                behavior: prefersReducedMotion() ? "auto" : "smooth"
+            });
+        }
+
+        function applyTheme(isDark) {
+            root.classList.toggle("dark", isDark);
+
+            themeButton.setAttribute("aria-pressed", String(isDark));
+            themeButton.setAttribute(
+                "aria-label",
+                isDark ? "Switch to light theme" : "Switch to dark theme"
+            );
+
+            themeButton.innerHTML = isDark
+                ? '<i class="fas fa-sun"></i>'
+                : '<i class="fas fa-moon"></i>';
+
+            try {
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+            } catch (error) {
+                console.warn("Theme preference could not be saved.");
+            }
         }
 
         function toggleDark() {
-            applyTheme(!root.classList.contains('dark'));
+            applyTheme(!root.classList.contains("dark"));
         }
 
-        try {
-            const saved = localStorage.getItem('theme');
-            if (saved) applyTheme(saved === 'dark');
-        } catch (e) {}
+        function loadSavedTheme() {
+            try {
+                const savedTheme = localStorage.getItem("theme");
+
+                if (savedTheme) {
+                    applyTheme(savedTheme === "dark");
+                } else {
+                    applyTheme(true);
+                }
+            } catch (error) {
+                applyTheme(true);
+            }
+        }
+
+        function showBuildMessage() {
+            alert(
+                "Yo! Tell me what site you want and I'll build the full thing — React, Tailwind, animations, forms, whatever. 🚀"
+            );
+        }
+
+        function toggleCryptoCard(card) {
+            const selected = card.classList.toggle("selected");
+            card.setAttribute("aria-pressed", String(selected));
+        }
 
         let score = 0;
         let gameResetTimer;
-        function playGame(el) {
+
+        function playGame(element) {
+            const emojis = ["🔥", "💥", "🚀", "⭐"];
+
             score += Math.floor(Math.random() * 10) + 5;
-            document.getElementById('score').textContent = score;
-            el.textContent = ['🔥', '💥', '🚀', '⭐'][Math.floor(Math.random() * 4)];
+
+            document.getElementById("score").textContent = score;
+            element.textContent =
+                emojis[Math.floor(Math.random() * emojis.length)];
+
             clearTimeout(gameResetTimer);
-            gameResetTimer = setTimeout(() => el.textContent = '🎮 CLICK ME', 300);
+
+            gameResetTimer = setTimeout(() => {
+                element.textContent = "🎮 CLICK ME";
+            }, 300);
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
-            if (e.key === 'g' || e.key === 'G') alert('Grok power activated 🦾');
+        document.addEventListener("keydown", (event) => {
+            if (event.repeat || event.ctrlKey || event.metaKey || event.altKey) {
+                return;
+            }
+
+            if (event.key.toLowerCase() === "g") {
+                alert("Grok power activated 🦾");
+            }
         });
+
+        loadSavedTheme();
     </script>
+
 </body>
 </html>
