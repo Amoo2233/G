@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grok Demo Site • Built Live</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        if (typeof tailwind !== 'undefined') tailwind.config = { darkMode: 'class' };
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;600&display=swap');
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .title-font { font-family: 'Space Grotesk', sans-serif; }
+        .hero-bg {
+            background-color: #0f172a;
+            background-image: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.55) 100%), url('https://picsum.photos/id/1015/2000/1200');
+            background-size: cover;
+            background-position: center;
+        }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .nav-link { position: relative; }
+        .nav-link:after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #22d3ee; transition: width 0.3s ease; }
+        .nav-link:hover:after { width: 100%; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-zinc-950 dark:text-slate-200 transition-colors">
+    <nav class="fixed top-0 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 z-50 transition-colors">
+        <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-cyan-500 rounded-xl flex items-center justify-center text-black font-bold text-xl">G</div>
+                <span class="title-font text-2xl font-semibold tracking-tighter">GrokSite</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#showcase" class="nav-link">Showcase</a>
+                <a href="#about" class="nav-link">About</a>
+            </div>
+            <button onclick="toggleDark()" aria-label="Toggle theme" class="px-5 py-2.5 bg-slate-900/10 hover:bg-slate-900/20 dark:bg-white/10 dark:hover:bg-white/20 rounded-2xl flex items-center gap-2 text-sm font-medium transition"><i id="theme-icon" class="fas fa-moon"></i></button>
+        </div>
+    </nav>
+
+    <section class="hero-bg min-h-screen flex items-center justify-center text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/50"></div>
+        <div class="relative z-10 px-6 max-w-4xl mx-auto pt-20 text-white">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-6 py-2 rounded-3xl text-sm mb-6">
+                <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span></span>
+                Built live with Grok • July 2026
+            </div>
+            <h1 class="title-font text-7xl md:text-8xl font-bold tracking-tighter mb-6 leading-none">Hey homie,<br>watch this.</h1>
+            <p class="text-2xl text-slate-300 max-w-xl mx-auto mb-10">I just created this full interactive website in seconds.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="document.getElementById('showcase').scrollIntoView({ behavior: 'smooth' })" class="px-10 py-5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-3xl text-lg flex items-center justify-center gap-3 transition-all active:scale-95"><i class="fas fa-rocket"></i> Explore Demo</button>
+                <button onclick="alert('Yo! Tell me what site you want and I\'ll build the full thing — React, Tailwind, animations, forms, whatever. 🚀')" class="px-10 py-5 border border-white/30 hover:bg-white/10 font-semibold rounded-3xl text-lg transition-all">Build Yours Now</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-24 bg-slate-100 dark:bg-zinc-900 transition-colors">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="px-4 py-2 bg-cyan-100 text-cyan-700 dark:bg-cyan-950 dark:text-cyan-400 text-sm rounded-3xl">What I can do</span>
+                <h2 class="title-font text-5xl font-bold mt-4">Modern Web Magic</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover transition-all border border-slate-200 dark:border-white/5">
+                    <div class="w-12 h-12 bg-cyan-500/10 text-cyan-500 rounded-2xl flex items-center justify-center text-xl mb-6"><i class="fas fa-bolt"></i></div>
+                    <h3 class="title-font text-2xl font-semibold mb-3">Instant Builds</h3>
+                    <p class="text-slate-600 dark:text-slate-400">Full pages in seconds — layout, copy, and styling generated together so everything ships coherent and ready.</p>
+                </div>
+                <div class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover transition-all border border-slate-200 dark:border-white/5">
+                    <div class="w-12 h-12 bg-cyan-500/10 text-cyan-500 rounded-2xl flex items-center justify-center text-xl mb-6"><i class="fas fa-palette"></i></div>
+                    <h3 class="title-font text-2xl font-semibold mb-3">Polished Design</h3>
+                    <p class="text-slate-600 dark:text-slate-400">Tailwind-powered design systems with real dark mode, hover states, and responsive layouts baked in.</p>
+                </div>
+                <div class="bg-white dark:bg-zinc-800/50 p-8 rounded-3xl card-hover transition-all border border-slate-200 dark:border-white/5">
+                    <div class="w-12 h-12 bg-cyan-500/10 text-cyan-500 rounded-2xl flex items-center justify-center text-xl mb-6"><i class="fas fa-gamepad"></i></div>
+                    <h3 class="title-font text-2xl font-semibold mb-3">Interactive Everything</h3>
+                    <p class="text-slate-600 dark:text-slate-400">Clickable cards, mini games, keyboard shortcuts — real JavaScript behavior, not just static mockups.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="showcase" class="py-24">
+        <div class="max-w-6xl mx-auto px-6">
+            <h2 class="title-font text-5xl font-bold text-center mb-4">Live Features</h2>
+            <p class="text-center text-slate-500 mb-12">Everything below actually works. Go ahead, poke at it.</p>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div onclick="this.classList.toggle('ring-4'); this.classList.toggle('ring-cyan-400')" class="bg-white dark:bg-zinc-900 p-8 rounded-3xl cursor-pointer card-hover transition-all border border-slate-200 dark:border-white/10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i class="fab fa-bitcoin text-3xl text-amber-500"></i>
+                        <h3 class="title-font text-2xl font-semibold">Selectable Card</h3>
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-400">Click anywhere on this card to toggle a selection ring — the kind of micro-interaction that makes a UI feel alive.</p>
+                </div>
+                <div class="bg-white dark:bg-zinc-900 p-8 rounded-3xl card-hover transition-all border border-slate-200 dark:border-white/10">
+                    <div id="game" class="h-48 bg-black rounded-2xl flex items-center justify-center text-6xl cursor-pointer select-none" onclick="playGame(this)">🎮 CLICK ME</div>
+                    <p class="text-center text-xs text-slate-500 mt-4">Score: <span id="score">0</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 bg-slate-100 dark:bg-zinc-900 transition-colors">
+        <div class="max-w-3xl mx-auto px-6 text-center">
+            <h2 class="title-font text-5xl font-bold mb-6">About This Demo</h2>
+            <p class="text-lg text-slate-600 dark:text-slate-400">This entire page — the layout, the theme toggle, the mini game, the animations — was generated live in a single pass. It's a small taste of what AI-assisted building looks like: describe what you want, get a working site back. Press <kbd class="px-2 py-1 bg-slate-200 dark:bg-zinc-800 rounded text-sm font-mono">G</kbd> anywhere for a surprise.</p>
+        </div>
+    </section>
+
+    <footer class="bg-white dark:bg-black py-16 border-t border-slate-200 dark:border-zinc-900 text-center transition-colors">
+        <p class="text-2xl title-font mb-2">Let's build something epic together, homie.</p>
+        <p class="text-sm text-slate-500">Built live with Grok • 2026</p>
+    </footer>
+
+    <script>
+        const root = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
+
+        function applyTheme(dark) {
+            root.classList.toggle('dark', dark);
+            themeIcon.className = dark ? 'fas fa-moon' : 'fas fa-sun';
+            try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (e) {}
+        }
+
+        function toggleDark() {
+            applyTheme(!root.classList.contains('dark'));
+        }
+
+        try {
+            const saved = localStorage.getItem('theme');
+            if (saved) applyTheme(saved === 'dark');
+        } catch (e) {}
+
+        let score = 0;
+        let gameResetTimer;
+        function playGame(el) {
+            score += Math.floor(Math.random() * 10) + 5;
+            document.getElementById('score').textContent = score;
+            el.textContent = ['🔥', '💥', '🚀', '⭐'][Math.floor(Math.random() * 4)];
+            clearTimeout(gameResetTimer);
+            gameResetTimer = setTimeout(() => el.textContent = '🎮 CLICK ME', 300);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
+            if (e.key === 'g' || e.key === 'G') alert('Grok power activated 🦾');
+        });
+    </script>
+</body>
+</html>
