@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA — Beyond the Horizon</title>
+<meta name="description" content="NOVA — an interactive experience beyond the horizon.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg:#05060a;
+    --bg-soft:#0b0d14;
+    --line:rgba(255,255,255,.08);
+    --ink:#eef1f8;
+    --mut:#8a91a3;
+    --c1:#6c7bff;   /* indigo */
+    --c2:#ff5e8a;   /* pink   */
+    --c3:#3fd6c0;   /* mint   */
+    --f-d:"Syne",sans-serif;
+    --f-b:"Inter",sans-serif;
+    --f-m:"JetBrains Mono",monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--f-b);
+    overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--c2);color:#000}
+
+  /* ---------- particle canvas ---------- */
+  #stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+  /* ---------- aurora blobs ---------- */
+  .aurora{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;filter:blur(90px);opacity:.5}
+  .aurora span{position:absolute;border-radius:50%;mix-blend-mode:screen;animation:drift 26s ease-in-out infinite alternate}
+  .aurora span:nth-child(1){width:52vw;height:52vw;left:-12vw;top:-14vw;background:radial-gradient(circle,var(--c1),transparent 65%)}
+  .aurora span:nth-child(2){width:44vw;height:44vw;right:-10vw;top:22vh;background:radial-gradient(circle,var(--c2),transparent 65%);animation-delay:-9s}
+  .aurora span:nth-child(3){width:40vw;height:40vw;left:24vw;bottom:-16vw;background:radial-gradient(circle,var(--c3),transparent 65%);animation-delay:-17s}
+  @keyframes drift{
+    0%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(6vw,-4vh) scale(1.15)}
+    100%{transform:translate(-5vw,5vh) scale(.95)}
+  }
+
+  /* ---------- nav ---------- */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px clamp(20px,5vw,56px);
+    background:rgba(5,6,10,.55);backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{font-family:var(--f-d);font-weight:800;font-size:20px;letter-spacing:.3em;text-decoration:none;color:var(--ink)}
+  .logo em{font-style:normal;background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nav-links{display:flex;gap:26px}
+  .nav-links a{color:var(--mut);text-decoration:none;font-size:13px;letter-spacing:.12em;text-transform:uppercase;transition:color .25s}
+  .nav-links a:hover{color:var(--ink)}
+  @media(max-width:640px){.nav-links{display:none}}
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;z-index:1;min-height:100svh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;padding:120px 20px 80px;
+  }
+  .tag{
+    font-family:var(--f-m);font-size:12px;letter-spacing:.35em;color:var(--c3);
+    text-transform:uppercase;margin-bottom:22px;
+    border:1px solid var(--line);border-radius:999px;padding:8px 18px;
+    background:rgba(255,255,255,.03);
+  }
+  h1{
+    font-family:var(--f-d);font-weight:800;
+    font-size:clamp(3rem,10vw,7.5rem);line-height:1.02;letter-spacing:-.02em;
+    max-width:14ch;
+  }
+  h1 .grad{background:linear-gradient(90deg,var(--c1),var(--c2) 50%,var(--c3));background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:hue 8s linear infinite}
+  @keyframes hue{to{background-position:200% 0}}
+  .sub{margin-top:26px;max-width:52ch;color:var(--mut);font-size:clamp(15px,1.6vw,18px);line-height:1.7}
+  .cta-row{display:flex;gap:16px;margin-top:42px;flex-wrap:wrap;justify-content:center}
+  .btn{
+    font-family:var(--f-d);font-weight:700;font-size:15px;letter-spacing:.05em;
+    padding:15px 34px;border-radius:999px;text-decoration:none;cursor:pointer;border:0;
+    transition:transform .25s,box-shadow .25s;
+  }
+  .btn:hover{transform:translateY(-3px)}
+  .btn-primary{color:#05060a;background:linear-gradient(90deg,var(--c1),var(--c2));box-shadow:0 8px 30px rgba(108,123,255,.35)}
+  .btn-primary:hover{box-shadow:0 14px 44px rgba(255,94,138,.45)}
+  .btn-ghost{color:var(--ink);background:transparent;border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--c3)}
+  .scroll-hint{position:absolute;bottom:28px;color:var(--mut);font-family:var(--f-m);font-size:11px;letter-spacing:.3em;animation:bob 2.2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(8px);opacity:1}}
+
+  /* ---------- sections ---------- */
+  section{position:relative;z-index:1;padding:110px clamp(20px,6vw,72px);max-width:1200px;margin:0 auto}
+  .kicker{font-family:var(--f-m);font-size:12px;letter-spacing:.35em;text-transform:uppercase;color:var(--c2);margin-bottom:14px}
+  h2{font-family:var(--f-d);font-weight:700;font-size:clamp(1.9rem,4.5vw,3.2rem);letter-spacing:-.01em;margin-bottom:18px}
+  .lead{color:var(--mut);max-width:60ch;line-height:1.75;font-size:16px}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(36px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---------- feature cards (tilt) ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;margin-top:52px}
+  .card{
+    position:relative;padding:34px 28px;border-radius:20px;
+    background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+    border:1px solid var(--line);
+    transition:transform .2s ease-out,border-color .3s;
+    transform-style:preserve-3d;will-change:transform;
+  }
+  .card:hover{border-color:rgba(255,255,255,.22)}
+  .card .ico{
+    width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
+    font-size:22px;margin-bottom:20px;
+    background:linear-gradient(135deg,var(--c1),var(--c2));
+    box-shadow:0 6px 22px rgba(108,123,255,.35);
+    transform:translateZ(30px);
+  }
+  .card h3{font-family:var(--f-d);font-size:19px;font-weight:700;margin-bottom:10px;transform:translateZ(24px)}
+  .card p{color:var(--mut);font-size:14.5px;line-height:1.65;transform:translateZ(16px)}
+
+  /* ---------- stats ---------- */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px;margin-top:52px;text-align:center}
+  .stat{padding:36px 16px;border-radius:20px;border:1px solid var(--line);background:rgba(255,255,255,.02)}
+  .stat .num{font-family:var(--f-d);font-weight:800;font-size:clamp(2.2rem,4.5vw,3.4rem);background:linear-gradient(90deg,var(--c3),var(--c1));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat .lbl{margin-top:8px;color:var(--mut);font-family:var(--f-m);font-size:11px;letter-spacing:.25em;text-transform:uppercase}
+
+  /* ---------- marquee ---------- */
+  .marquee{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0;position:relative;z-index:1;background:rgba(255,255,255,.015)}
+  .marquee-track{display:flex;gap:64px;width:max-content;animation:scrollx 28s linear infinite;font-family:var(--f-d);font-weight:700;font-size:22px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.28);white-space:nowrap}
+  .marquee-track span b{color:var(--c3);font-weight:700}
+  @keyframes scrollx{to{transform:translateX(-50%)}}
+
+  /* ---------- terminal ---------- */
+  .term{
+    margin-top:52px;border-radius:16px;overflow:hidden;border:1px solid var(--line);
+    background:#0a0c12;box-shadow:0 24px 70px rgba(0,0,0,.5);
+  }
+  .term-bar{display:flex;gap:8px;align-items:center;padding:13px 18px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--line)}
+  .dot{width:12px;height:12px;border-radius:50%}
+  .term-bar .t{margin-left:10px;font-family:var(--f-m);font-size:11px;color:var(--mut);letter-spacing:.1em}
+  .term-body{padding:24px 22px;font-family:var(--f-m);font-size:13.5px;line-height:2}
+  .term-body .p{color:var(--c3)}
+  .term-body .cmd{color:var(--ink)}
+  .term-body .out{color:var(--mut)}
+  .cursor{display:inline-block;width:9px;height:17px;background:var(--c3);vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* ---------- footer ---------- */
+  footer{position:relative;z-index:1;border-top:1px solid var(--line);padding:56px clamp(20px,6vw,72px);display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;color:var(--mut);font-size:13px}
+  footer a{color:var(--ink);text-decoration:none}
+  footer a:hover{color:var(--c2)}
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="aurora"><span></span><span></span><span></span></div>
+
+<nav>
+  <a class="logo" href="#">N<em>O</em>VA</a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#numbers">Numbers</a>
+    <a href="#launch">Launch</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="tag">// interactive experience v1.0</div>
+  <h1>Build things that feel <span class="grad">alive</span>.</h1>
+  <p class="sub">NOVA is a playground of light, motion and code — a single HTML file with zero frameworks, zero build steps, and a sky full of particles that follow your cursor.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#launch">Launch sequence</a>
+    <a class="btn btn-ghost" href="#features">Explore</a>
+  </div>
+  <div class="scroll-hint">SCROLL ▼</div>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="mq">
+    <span>Zero dependencies <b>✦</b> Pure CSS + Canvas <b>✦</b> 60fps particles <b>✦</b> Mouse-reactive <b>✦</b> Dark by design <b>✦</b>&nbsp;</span>
+  </div>
+</div>
+
+<section id="features">
+  <div class="reveal">
+    <div class="kicker">What's inside</div>
+    <h2>Small file. Big energy.</h2>
+    <p class="lead">Everything on this page is hand-rolled: the starfield, the aurora, the 3D-tilting cards, the scroll reveals. View source — it's all right there.</p>
+  </div>
+  <div class="grid">
+    <div class="card reveal" data-tilt>
+      <div class="ico">✦</div>
+      <h3>Living starfield</h3>
+      <p>A canvas of drifting particles that link into constellations and bend toward your cursor like gravity.</p>
+    </div>
+    <div class="card reveal" data-tilt>
+      <div class="ico" style="background:linear-gradient(135deg,var(--c2),var(--c3))">◎</div>
+      <h3>Aurora engine</h3>
+      <p>Three blurred radial gradients on screen blend-mode, drifting on offset loops — the whole sky in ~10 lines of CSS.</p>
+    </div>
+    <div class="card reveal" data-tilt>
+      <div class="ico" style="background:linear-gradient(135deg,var(--c3),var(--c1))">⌁</div>
+      <h3>3D tilt cards</h3>
+      <p>These cards track your pointer and rotate in 3D space with layered depth. Go on — hover me.</p>
+    </div>
+    <div class="card reveal" data-tilt>
+      <div class="ico" style="background:linear-gradient(135deg,var(--c1),var(--c3))">✧</div>
+      <h3>Scroll choreography</h3>
+      <p>IntersectionObserver reveals each section as it enters the viewport. No scroll libraries, no jank.</p>
+    </div>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="reveal">
+    <div class="kicker">By the numbers</div>
+    <h2>Counted live, on scroll.</h2>
+  </div>
+  <div class="stats">
+    <div class="stat reveal"><div class="num" data-count="140">0</div><div class="lbl">Particles</div></div>
+    <div class="stat reveal"><div class="num" data-count="60">0</div><div class="lbl">FPS target</div></div>
+    <div class="stat reveal"><div class="num" data-count="0">0</div><div class="lbl">Dependencies</div></div>
+    <div class="stat reveal"><div class="num" data-count="1">0</div><div class="lbl">HTML file</div></div>
+  </div>
+</section>
+
+<section id="launch">
+  <div class="reveal">
+    <div class="kicker">Launch</div>
+    <h2>Deploy it anywhere.</h2>
+    <p class="lead">One file, no build step. Drop it on GitHub Pages, Netlify, or a USB stick from 2009 — it just works.</p>
+  </div>
+  <div class="term reveal">
+    <div class="term-bar">
+      <div class="dot" style="background:#ff5f57"></div>
+      <div class="dot" style="background:#febc2e"></div>
+      <div class="dot" style="background:#28c840"></div>
+      <div class="t">nova — zsh</div>
+    </div>
+    <div class="term-body" id="term-body">
+      <div><span class="p">➜</span> <span class="cmd" id="type-target"></span><span class="cursor"></span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>NOVA © 2026 — built with one HTML file & questionable amounts of glow.</div>
+  <div><a href="#top">Back to top ↑</a></div>
+</footer>
+
+<script>
+/* ========== starfield with cursor gravity ========== */
+const cv = document.getElementById('stars');
+const cx = cv.getContext('2d');
+let W, H, stars = [];
+const N = 140, LINK = 110;
+const mouse = { x: -9999, y: -9999 };
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function resize() {
+  W = cv.width = innerWidth * devicePixelRatio;
+  H = cv.height = innerHeight * devicePixelRatio;
+  cv.style.width = innerWidth + 'px';
+  cv.style.height = innerHeight + 'px';
+}
+addEventListener('resize', resize); resize();
+
+for (let i = 0; i < N; i++) {
+  stars.push({
+    x: Math.random() * W, y: Math.random() * H,
+    vx: (Math.random() - .5) * .18 * devicePixelRatio,
+    vy: (Math.random() - .5) * .18 * devicePixelRatio,
+    r: (Math.random() * 1.4 + .4) * devicePixelRatio
+  });
+}
+
+addEventListener('pointermove', e => {
+  mouse.x = e.clientX * devicePixelRatio;
+  mouse.y = e.clientY * devicePixelRatio;
+});
+addEventListener('pointerleave', () => { mouse.x = mouse.y = -9999; });
+
+function tick() {
+  cx.clearRect(0, 0, W, H);
+  for (const s of stars) {
+    // gentle pull toward cursor
+    const dx = mouse.x - s.x, dy = mouse.y - s.y;
+    const d2 = dx * dx + dy * dy;
+    if (d2 < (220 * devicePixelRatio) ** 2) {
+      const d = Math.sqrt(d2) || 1;
+      s.vx += (dx / d) * .012 * devicePixelRatio;
+      s.vy += (dy / d) * .012 * devicePixelRatio;
+    }
+    s.vx *= .985; s.vy *= .985;
+    s.x += s.vx; s.y += s.vy;
+    if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+    if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+
+    cx.beginPath();
+    cx.arc(s.x, s.y, s.r, 0, 7);
+    cx.fillStyle = 'rgba(238,241,248,.85)';
+    cx.fill();
+  }
+  // constellation lines
+  const L = LINK * devicePixelRatio;
+  for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+    const a = stars[i], b = stars[j];
+    const dx = a.x - b.x, dy = a.y - b.y;
+    const d2 = dx * dx + dy * dy;
+    if (d2 < L * L) {
+      const alpha = (1 - Math.sqrt(d2) / L) * .28;
+      cx.strokeStyle = `rgba(124,156,255,${alpha})`;
+      cx.lineWidth = devicePixelRatio * .6;
+      cx.beginPath(); cx.moveTo(a.x, a.y); cx.lineTo(b.x, b.y); cx.stroke();
+    }
+  }
+  requestAnimationFrame(tick);
+}
+if (!reduced) tick();
+
+/* ========== scroll reveal ========== */
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+}, { threshold: .18 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ========== 3D tilt cards ========== */
+document.querySelectorAll('[data-tilt]').forEach(card => {
+  card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - .5;
+    const py = (e.clientY - r.top) / r.height - .5;
+    card.style.transform = `perspective(700px) rotateY(${px * 12}deg) rotateX(${-py * 12}deg) translateY(-4px)`;
+  });
+  card.addEventListener('pointerleave', () => { card.style.transform = ''; });
+});
+
+/* ========== count-up stats ========== */
+const cio = new IntersectionObserver(es => {
+  es.forEach(e => {
+    if (!e.isIntersecting) return;
+    cio.unobserve(e.target);
+    const el = e.target, end = +el.dataset.count, t0 = performance.now();
+    (function step(t) {
+      const k = Math.min((t - t0) / 1200, 1);
+      el.textContent = Math.round(end * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(step);
+    })(t0);
+  });
+}, { threshold: .6 });
+document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+
+/* ========== marquee duplicate for seamless loop ========== */
+const mq = document.getElementById('mq');
+mq.innerHTML += mq.innerHTML;
+
+/* ========== typing terminal ========== */
+const lines = [
+  ['git clone nova && open index.html', '✔ deployed in 0.02s — no build step found (none needed)'],
+  ['grep -c "framework" index.html', '0'],
+  ['./launch --to the-moon', '🚀 ignition… liftoff. enjoy the view.']
+];
+const target = document.getElementById('type-target');
+const body = document.getElementById('term-body');
+let li = 0;
+function typeLine() {
+  if (li >= lines.length) return;
+  const [cmd, out] = lines[li]; let ci = 0;
+  (function t() {
+    target.textContent = cmd.slice(0, ++ci);
+    if (ci < cmd.length) setTimeout(t, 34 + Math.random() * 46);
+    else setTimeout(() => {
+      const done = document.createElement('div');
+      done.innerHTML = `<span class="p">➜</span> <span class="cmd"></span>`;
+      done.querySelector('.cmd').textContent = cmd;
+      const o = document.createElement('div');
+      o.className = 'out'; o.textContent = out;
+      body.insertBefore(done, body.lastElementChild);
+      body.insertBefore(o, body.lastElementChild);
+      target.textContent = ''; li++; setTimeout(typeLine, 700);
+    }, 500);
+  })();
+}
+const tio = new IntersectionObserver(es => {
+  if (es[0].isIntersecting) { tio.disconnect(); typeLine(); }
+}, { threshold: .4 });
+tio.observe(document.querySelector('.term'));
+</script>
+</body>
+</html>
